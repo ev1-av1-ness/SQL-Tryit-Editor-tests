@@ -8,8 +8,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class MainPageW3C extends PageObject
 {
-   @FindBy(id = "sdksdf")
-   private WebElement _jdsjd;
+   @FindBy(xpath = "//div[@class='CodeMirror-code']//*[@class='cm-m-sql']")
+   private WebElement _textareaCodeSQL;
 
    @FindBy(id = "sjljkjkdf")
    private WebElement _dsf;
@@ -19,5 +19,17 @@ public class MainPageW3C extends PageObject
     {
         super(driver, wait);
         PageFactory.initElements(_driver, this);
+    }
+
+    private WebElement getTextareaCodeSQL() {
+        return _textareaCodeSQL;
+    }
+
+
+    public MainPageW3C clearAndSendCommandInTextAreaCodeSQL() {
+        //System.out.println("Ввести команду SQL в поле выполнения команд");
+        System.out.println("Кликнуть в поле ввода и очистить его");
+        getTextareaCodeSQL().click();
+        return this;
     }
 }
