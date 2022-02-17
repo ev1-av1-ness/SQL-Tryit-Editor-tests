@@ -8,11 +8,14 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class MainPageW3C extends PageObject
 {
-   @FindBy(xpath = "//div[@class='CodeMirror-code']//*[@class='cm-m-sql']")
-   private WebElement _textareaCodeSQL;
+    @FindBy(css = ".CodeMirror-line:nth-last-child(2) span > span:nth-last-of-type(1)")
+    private WebElement _textareaCodeSQL;
 
-   @FindBy(id = "sjljkjkdf")
-   private WebElement _dsf;
+    @FindBy(css = ".CodeMirror-line:nth-last-child(2)")
+    private WebElement _prelastlineCodeSQL;
+
+    @FindBy(id = "sjljkjkdf")
+    private WebElement _dsf;
 
 
     public MainPageW3C(WebDriver driver, WebDriverWait wait)
@@ -25,11 +28,29 @@ public class MainPageW3C extends PageObject
         return _textareaCodeSQL;
     }
 
+    private WebElement getPrelastlineCodeSQL() { return _prelastlineCodeSQL; }
 
-    public MainPageW3C clearAndSendCommandInTextAreaCodeSQL() {
-        //System.out.println("Ввести команду SQL в поле выполнения команд");
+
+    public MainPageW3C clearCommandInTextAreaCodeSQL() {
         System.out.println("Кликнуть в поле ввода и очистить его");
         getTextareaCodeSQL().click();
+
+//        if(getTextareaCodeSQL().getAttribute("value").length() > 0) {
+//
+//            customClearInput(getPrelastlineCodeSQL());
+//            }
+        //и если первая строчка не пустая, то повторить
+        //пока _textareaCodeSQL; не останется 1 единственный
+        //можно через коллекцию size()
         return this;
     }
+
+    public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommand) {
+        JavascriptExecutor js = (JavascriptExecutor) _driver;
+        js.executeScript("arguments[0].innerText = " + sqlCommand, getTextareaCodeSQL());
+        //getTextareaCodeSQL().sendKeys(sqlCommand);
+        return this;
+    }
+
+    //получить из таблицы разные значения
 }

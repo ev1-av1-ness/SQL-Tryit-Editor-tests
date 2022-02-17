@@ -33,13 +33,19 @@ public class TestBase extends TestWatcher
 
             _wait = new WebDriverWait(_driver, 30);
         }
+
+
     }
 
     @After
     public void After() {
         if(_driver!=null) {
-            _driver.close();
-            _driver.quit();
+            try {
+                _driver.close();
+                _driver.quit();
+            } catch (Exception e) {
+                System.out.println("Browser already closed");
+            }
         }
     }
 }
