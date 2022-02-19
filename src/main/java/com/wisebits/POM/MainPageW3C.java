@@ -1,13 +1,11 @@
 package com.wisebits.POM;
 
 import com.wisebits.PageObject;
-import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,9 +55,9 @@ public class MainPageW3C extends PageObject
 
         JavascriptExecutor js = (JavascriptExecutor) _driver;
         List<WebElement> commandWords = _driver.findElements(By.cssSelector("span .cm-m-sql"));
-        commandWords.stream().
-                    filter(commandWord -> commandWord.getText().length() > 1).
-                    forEach(commandWord -> js.executeScript("arguments[0].innerText = ''", commandWord));
+        commandWords.stream()
+                    .filter(commandWord -> commandWord.getText().length() > 1)
+                    .forEach(commandWord -> js.executeScript("arguments[0].innerText = ''", commandWord));
 
 //        while (numberOfCommandWords() > 1) {
 //            try {
@@ -82,8 +80,19 @@ public class MainPageW3C extends PageObject
         return this;
     }
 
-    //получить из таблицы разные значения
-//    public MainPageW3C checkTableValues() {
-//        return this;
-//    }
+    public String getAddressOfContactName(WebElement contactName) {
+            String addressValue = contactName.findElement(By.xpath("following-sibling::td[1]")).getText();
+            return addressValue;
+    }
+
+    //получить из таблицы значение
+    public String getTextForTableValue() {
+//
+        List<WebElement> valuesOfContactNamesColumn = _driver.findElements(By.xpath("//tbody//td[3]"));
+        List<String> address = valuesOfContactNamesColumn.stream()
+                    .filter(contactName -> contactName.getText().contains("Giovanni Rovelli"))
+                    .map(contactName -> getAddressOfContactName(contactName))
+                    .collect(Collectors.toList());
+        return address.get(0);
+    }
 }
