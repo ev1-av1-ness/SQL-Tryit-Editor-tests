@@ -23,35 +23,4 @@ public abstract class PageObject
     {
         _driver.manage().timeouts().implicitlyWait(defaultImplicitlyWaitSeconds, TimeUnit.SECONDS);
     }
-
-
-    //rewrite
-
-//    protected void customClearUsingBackspace(WebElement element) throws InterruptedException
-//    {
-//        _driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-//
-//        Instant timeout = Instant.now().plusSeconds(30);
-//
-//        System.out.println("try to clear element with backspace: " + element);
-//
-//        while (timeout.compareTo(Instant.now()) > 0 && element.getAttribute("value").length() > 0) {
-//            try {
-//                element.sendKeys(Keys.CONTROL + "a");
-//                element.sendKeys(Keys.BACK_SPACE);
-//
-//            } catch (WebDriverException ex) {
-//                Thread.sleep(400);
-//            }
-//        }
-//
-//        returnDefaultImplicitlyWait();
-//        Assert.assertEquals(("Unsuccessful attempt to clear element"), 0, element.getAttribute("value").length());
-//    }
-
-    public void customClearInput(WebElement element)
-    {
-        JavascriptExecutor js = (JavascriptExecutor) _driver;
-        js.executeScript("arguments[1].value = arguments[0]; ", "", element);
-    }
 }

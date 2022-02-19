@@ -17,11 +17,11 @@ public class TableCheckTest extends TestBase {
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
         System.out.println("1. Вывести все строки таблицы Customers");
-//        mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
+        mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
+        mainPageW3C.sendCommandInTextAreaCodeSQL("'SELECT * FROM Customers;'");
 
+        System.out.println("2. Проверить, что в выводе есть значения Giovanni Rovelli, Via Ludovico il Moro 22");
 
-        mainPageW3C.sendCommandInTextAreaCodeSQL("'Hello'");
-                System.out.println("fdgdg");
 
     }
 
