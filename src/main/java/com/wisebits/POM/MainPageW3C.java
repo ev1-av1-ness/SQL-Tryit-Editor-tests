@@ -20,6 +20,10 @@ public class MainPageW3C extends PageObject
     @FindBy(css = ".ws-btn")
     private WebElement _runSQLButton;
 
+    @FindBy(xpath = "//div[contains(text(),'Number of Records:')]")
+    private WebElement _numberOfRecordsFromTip;
+
+
 //    @FindBy(css = ".CodeMirror-line:nth-last-child(2)")
 //    private WebElement _prelastlineCodeSQL;
 
@@ -45,10 +49,14 @@ public class MainPageW3C extends PageObject
         return _runSQLButton;
     }
 
+    private WebElement getNumberOfRecordsFromTip() {
+        return _numberOfRecordsFromTip;
+    }
 
-//    public int numberOfCommandWords() {
-//        return _driver.findElements(By.cssSelector("span .cm-m-sql")).size();
-//    }
+
+    public int countAmountOfRecords() {
+        return _driver.findElements(By.xpath("//div[@id='divResultSQL']//table//tr[position()>1]")).size();
+    }
 
     public MainPageW3C clearCommandInTextAreaCodeSQL() {
         System.out.println("Delete commands inside text area");
@@ -80,19 +88,24 @@ public class MainPageW3C extends PageObject
         return this;
     }
 
-    public String getAddressOfContactName(WebElement contactName) {
-            String addressValue = contactName.findElement(By.xpath("following-sibling::td[1]")).getText();
+    public String getAddressOfContactName(WebElement contactNameValue) {
+            String addressValue = contactNameValue.findElement(By.xpath("following-sibling::td[1]")).getText();
             return addressValue;
     }
 
     //получить из таблицы значение
-    public String getTextForTableValue() {
+    //todo отрефачить
+    public String getTextForTableValue(String contactNameValue) {
 //
         List<WebElement> valuesOfContactNamesColumn = _driver.findElements(By.xpath("//tbody//td[3]"));
         List<String> address = valuesOfContactNamesColumn.stream()
-                    .filter(contactName -> contactName.getText().contains("Giovanni Rovelli"))
+                    .filter(contactName -> contactName.getText().contains(contactNameValue))
                     .map(contactName -> getAddressOfContactName(contactName))
                     .collect(Collectors.toList());
         return address.get(0);
     }
+
+//    public int getNumberOfRecords() {
+//
+//    }
 }
