@@ -67,6 +67,12 @@ public class TableCheckTest extends TestBase {
         //применить randomValues - helper. Ограничить в хелпере рандом количеством записей в таблице
         int customerID = 7;
         String commandToUpdateRecord = "UPDATE .. WHERE customerID = " + customerID;
+
+        //ввести команду
+
+
+        //можно softAssertion для каждого значения поля. собрать их в лист (и стримом), проверить на соответствие ожидаемым
+        //expected List
     }
 
     @Test
