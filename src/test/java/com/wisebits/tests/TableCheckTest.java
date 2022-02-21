@@ -21,7 +21,7 @@ public class TableCheckTest extends TestBase {
 
         System.out.println("1. Вывести все строки таблицы Customers");
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        mainPageW3C.sendCommandInTextAreaCodeSQL("'SELECT * FROM Customers;'");
+        mainPageW3C.sendCommandInTextAreaCodeSQL("\"SELECT * FROM Customers;\"");
 
         System.out.println("2. Проверить, что в выводе значению " + contactNameValue + " соответствует " +  addressValue);
         assertThat(mainPageW3C.getTextForTableValue(contactNameValue)).as("Значение Address для ContactName не соответствует ожидаемому")
@@ -44,9 +44,13 @@ public class TableCheckTest extends TestBase {
 
         System.out.println("2. Проверить, что в выводе по условию " + condition + " количество записей равно " + amountOfRecords);
 
-        //.contains(amountOfRecords.toString());
-        //countAmountOfRecords().equalsTo(amountOfRecords)
-        //опционально еще проверка, что все элементы последнего столбца City - London
+        assertThat(mainPageW3C.textNumberOfRecordsFromTip()).as("Количество записей в сообщении не соответствует ожидаемому")
+                .contains(Integer.toString(amountOfRecords));
+        assertThat(mainPageW3C.countAmountOfRecords()).as("Количество записей в таблице не соответствует ожидаемому")
+                .isEqualTo(amountOfRecords);
+
+
+        //опционально можно добавить проверку, что все элементы последнего столбца City - London
     }
 
     @Test
@@ -54,10 +58,14 @@ public class TableCheckTest extends TestBase {
         System.out.println("Проверить, что новая запись добавилась в таблицу");
         String commandToAddRecord = "'INSERT ..";
 
-        //опционально применить randomValues
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
+
+        //проверить количество записей в таблице - было
+        //количество записей в таблице - стало
+        //можно softAssertion для каждого значения поля. собрать их в лист (и стримом), проверить на соответствие ожидаемым
+        //expected List
     }
 
     @Test
@@ -65,6 +73,7 @@ public class TableCheckTest extends TestBase {
         System.out.println("Проверить, что в записи обновились все поля");
 
         //применить randomValues - helper. Ограничить в хелпере рандом количеством записей в таблице
+
         int customerID = 7;
         String commandToUpdateRecord = "UPDATE .. WHERE customerID = " + customerID;
 
@@ -78,12 +87,20 @@ public class TableCheckTest extends TestBase {
     @Test
     public void checkResultsAreMissingAfterDeleted() {
         System.out.println("Проверить, что после удаления данные не выводятся в таблицу");
+        String commandToDeleteRecords = "'DELETE FROM Customers WHERE City = \"London\";'";
+        String commandToSelectDeletedRecords = "'SELECT * FROM Customers WHERE City = \"London\";'";
 
-        //DELETE FROM Customers WHERE City = 'London';
+        _driver.get(_mainUrl);
+        MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
+
+        mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
+        //mainPageW3C.sendCommandInTextAreaCodeSQL(commandToDeleteRecords);
         //Check message "You have made changes to the database. Rows affected: 6"
 
-        //SELECT * FROM Customers WHERE City = 'London';
+        //mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
+        //mainPageW3C.sendCommandInTextAreaCodeSQL(commandToSelectDeletedRecords);
         //Check message "No result."
-        //Check isMissing Element - //div[@id='divResultSQL']//table
+
+        assertThat(mainPageW3C.isMissingTableOfRecords()).as("Таблица записей отображается").isTrue();
     }
 }

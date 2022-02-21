@@ -82,6 +82,9 @@ public class MainPageW3C extends PageObject
     }
 
     public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommand) {
+
+        //переписать на поток для каждого span
+
         JavascriptExecutor js = (JavascriptExecutor) _driver;
         js.executeScript("arguments[0].innerText = " + sqlCommand, getTextareaCodeSQL());
         getRunSQLButton().click();
@@ -105,7 +108,11 @@ public class MainPageW3C extends PageObject
         return address.get(0);
     }
 
-//    public int getNumberOfRecords() {
-//
-//    }
+    public String textNumberOfRecordsFromTip() {
+        return getNumberOfRecordsFromTip().getText();
+    }
+
+    public Boolean isMissingTableOfRecords() {
+        return isElementMissing(By.xpath("//div[@id='divResultSQL']//table"));
+    }
 }
