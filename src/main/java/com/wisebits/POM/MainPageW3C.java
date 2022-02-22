@@ -6,6 +6,9 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,12 +84,15 @@ public class MainPageW3C extends PageObject
         return this;
     }
 
-    public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommand) {
+    public MainPageW3C sendCommandInTextAreaCodeSQL(String [] sqlCommandWords) {
+        int amountOfWords = sqlCommandWords.length;
+        for (int i = 0; i < amountOfWords; i++) {
+        //List<String> listOfSQLCommands = Arrays.asList(sqlCommandWords);
+            JavascriptExecutor js = (JavascriptExecutor) _driver;
 
-        //переписать на поток для каждого span
-
-        JavascriptExecutor js = (JavascriptExecutor) _driver;
-        js.executeScript("arguments[0].innerText = " + sqlCommand, getTextareaCodeSQL());
+            List<WebElement> commandWordsSpans = _driver.findElements(By.cssSelector("span .cm-m-sql"));
+                    js.executeScript("arguments[0].innerText = " + sqlCommandWords[i], commandWordsSpans.get(i));
+        }
         getRunSQLButton().click();
         return this;
     }

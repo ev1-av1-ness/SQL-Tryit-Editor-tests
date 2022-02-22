@@ -4,6 +4,8 @@ import com.wisebits.POM.MainPageW3C;
 import com.wisebits.TestBase;
 import org.junit.Test;
 
+import java.util.stream.Stream;
+
 import static com.wisebits.PageURL.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,13 +17,14 @@ public class TableCheckTest extends TestBase {
         System.out.println("Проверить, что значения полей для одной записи соответствуют ожидаемым");
         String contactNameValue = "Giovanni Rovelli";
         String addressValue = "Via Ludovico il Moro 22";
+        String[] sqlCommandWords = {"'SELECT '", "'* '", "' FROM'", "' Customers'"};
 
-       _driver.get(_mainUrl);
+        _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
         System.out.println("1. Вывести все строки таблицы Customers");
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        mainPageW3C.sendCommandInTextAreaCodeSQL("\"SELECT * FROM Customers;\"");
+        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords);
 
         System.out.println("2. Проверить, что в выводе значению " + contactNameValue + " соответствует " +  addressValue);
         assertThat(mainPageW3C.getTextForTableValue(contactNameValue)).as("Значение Address для ContactName не соответствует ожидаемому")
@@ -33,6 +36,7 @@ public class TableCheckTest extends TestBase {
     {
         System.out.println("Проверить соответствие количества записей в таблице ожидаемому по запросу");
         int amountOfRecords = 6;
+        //String[] sqlCommandWords = {"'SELECT '", "'* '", "' FROM'", "' Customers', """};
         String condition = "WHERE city = 'London'";
 
         _driver.get(_mainUrl);
@@ -40,7 +44,7 @@ public class TableCheckTest extends TestBase {
 
         System.out.println("1. Вывести строки таблицы Customers, где " + condition);
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        mainPageW3C.sendCommandInTextAreaCodeSQL("'SELECT * FROM Customers " + condition + ";'");
+        //mainPageW3C.sendCommandInTextAreaCodeSQL("'SELECT * FROM Customers " + condition + ";'");
 
         System.out.println("2. Проверить, что в выводе по условию " + condition + " количество записей равно " + amountOfRecords);
 
