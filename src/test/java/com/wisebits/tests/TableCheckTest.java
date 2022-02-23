@@ -12,19 +12,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TableCheckTest extends TestBase {
 
     @Test
-    public void getTheAddressOfContactTest()
-    {
+    public void getTheAddressOfContactTest() {
         System.out.println("Проверить, что значения полей для одной записи соответствуют ожидаемым");
         String contactNameValue = "Giovanni Rovelli";
         String addressValue = "Via Ludovico il Moro 22";
-        String[] sqlCommandWords = {"'SELECT '", "'* '", "' FROM'", "' Customers'"};
+
+        String sqlCommandWords = "'SELECT * FROM Customers'";
+        String[] sqlCommandWordsArray = {"'SELECT '", "'* '", "' FROM'", "' Customers'"};
+
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
         System.out.println("1. Вывести все строки таблицы Customers");
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords);
+        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords, sqlCommandWordsArray);
 
         System.out.println("2. Проверить, что в выводе значению " + contactNameValue + " соответствует " +  addressValue);
         assertThat(mainPageW3C.getTextForTableValue(contactNameValue)).as("Значение Address для ContactName не соответствует ожидаемому")
@@ -32,25 +34,24 @@ public class TableCheckTest extends TestBase {
     }
 
     @Test
-    public void checkForAmountOfRecordsTest()
-    {
+    public void checkForAmountOfRecordsTest() {
         System.out.println("Проверить соответствие количества записей в таблице ожидаемому по запросу");
         int amountOfRecords = 6;
-        //String[] sqlCommandWords = {"'SELECT '", "'* '", "' FROM'", "' Customers', """};
-        String condition = "WHERE city = 'London'";
+        String sqlCommandWords = "'SELECT * FROM Customers WHERE City = \"London\"'";
+        String[] sqlCommandWordsArray = {"'SELECT '", "'* '", "' FROM'", "' Customers'", "' WHERE'", "' City ='", "' \"London\"'"};
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
-        System.out.println("1. Вывести строки таблицы Customers, где " + condition);
+        System.out.println("1. Вывести строки таблицы Customers по условию");
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        //mainPageW3C.sendCommandInTextAreaCodeSQL("'SELECT * FROM Customers " + condition + ";'");
+        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords, sqlCommandWordsArray);
 
-        System.out.println("2. Проверить, что в выводе по условию " + condition + " количество записей равно " + amountOfRecords);
+        System.out.println("2. Проверить, что в выводе по условию количество записей равно " + amountOfRecords);
 
-        assertThat(mainPageW3C.textNumberOfRecordsFromTip()).as("Количество записей в сообщении не соответствует ожидаемому")
+        _soft.assertThat(mainPageW3C.textNumberOfRecordsFromTip()).as("Количество записей в сообщении не соответствует ожидаемому")
                 .contains(Integer.toString(amountOfRecords));
-        assertThat(mainPageW3C.countAmountOfRecords()).as("Количество записей в таблице не соответствует ожидаемому")
+        _soft.assertThat(mainPageW3C.countAmountOfRecords()).as("Количество записей в таблице не соответствует ожидаемому")
                 .isEqualTo(amountOfRecords);
 
 
@@ -60,14 +61,17 @@ public class TableCheckTest extends TestBase {
     @Test
     public void checkForOneNewAddedRecordTest() {
         System.out.println("Проверить, что новая запись добавилась в таблицу");
-        String commandToAddRecord = "'INSERT ..";
-
+        String sqlCommandWords = "'INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country) " +
+                "VALUES (\"Drasfublut Ikalfend\", \"Zigmund\", \"Yaren 26\", \"Berlin\", \"123843\", \"Germany\")'";
+        String[] sqlCommandWordsArray = {"'INSERT '", "' '", "' INTO'", "' Customers (CustomerName, ContactName, Address, City, PostalCode, Country)'" +
+                "' VALUES', "};
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
-        //проверить количество записей в таблице - было
-        //количество записей в таблице - стало
+        //проверить количество записей в таблице - было 91
+        //Check message "You have made changes to the database. Rows affected: 1"
+        //количество записей в таблице - стало 92
         //можно softAssertion для каждого значения поля. собрать их в лист (и стримом), проверить на соответствие ожидаемым
         //expected List
     }

@@ -14,11 +14,10 @@ import java.util.stream.Collectors;
 
 public class MainPageW3C extends PageObject
 {
-    @FindBy(css = ".CodeMirror-line:nth-last-child(2) span > span:nth-last-of-type(1)")
+//    @FindBy(css = ".CodeMirror-line:nth-last-child(2) span > span:nth-last-of-type(1)")
+//    private WebElement _textareaCodeSQL;
+    @FindBy(xpath = "//textarea[@id='textareaCodeSQL']")
     private WebElement _textareaCodeSQL;
-
-    @FindBy(css = "span .cm-m-sql")
-    private WebElement _commandWord;
 
     @FindBy(css = ".ws-btn")
     private WebElement _runSQLButton;
@@ -84,15 +83,17 @@ public class MainPageW3C extends PageObject
         return this;
     }
 
-    public MainPageW3C sendCommandInTextAreaCodeSQL(String [] sqlCommandWords) {
-        int amountOfWords = sqlCommandWords.length;
-        for (int i = 0; i < amountOfWords; i++) {
-        //List<String> listOfSQLCommands = Arrays.asList(sqlCommandWords);
-            JavascriptExecutor js = (JavascriptExecutor) _driver;
+    public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommandWords, String[] sqlCommandWordsArray) {
 
-            List<WebElement> commandWordsSpans = _driver.findElements(By.cssSelector("span .cm-m-sql"));
-                    js.executeScript("arguments[0].innerText = " + sqlCommandWords[i], commandWordsSpans.get(i));
+        JavascriptExecutor js = (JavascriptExecutor) _driver;
+        js.executeScript("arguments[0].innerText = " + sqlCommandWords, getTextareaCodeSQL());
+
+        int amountOfWords = sqlCommandWordsArray.length;
+            for (int i = 0; i < amountOfWords; i++) {
+                List<WebElement> commandWordsSpans = _driver.findElements(By.cssSelector("span .cm-m-sql"));
+                js.executeScript("arguments[0].innerText = " + sqlCommandWordsArray[i], commandWordsSpans.get(i));
         }
+
         getRunSQLButton().click();
         return this;
     }
