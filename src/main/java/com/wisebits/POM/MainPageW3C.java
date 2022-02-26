@@ -1,37 +1,31 @@
 package com.wisebits.POM;
 
 import com.wisebits.PageObject;
+import org.junit.Assert;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class MainPageW3C extends PageObject
-{
-//    @FindBy(css = ".CodeMirror-line:nth-last-child(2) span > span:nth-last-of-type(1)")
+public class MainPageW3C extends PageObject {
+    //    @FindBy(css = ".CodeMirror-line:nth-last-child(2) span > span:nth-last-of-type(1)")
 //    private WebElement _textareaCodeSQL;
-    @FindBy(xpath = "//textarea[@id='textareaCodeSQL']")
+    @FindBy(xpath = "//div[contains(@class, 'CodeMirror-code')]")
     private WebElement _textareaCodeSQL;
 
     @FindBy(css = ".ws-btn")
     private WebElement _runSQLButton;
 
-    @FindBy(xpath = "//div[contains(text(),'Number of Records:')]")
+    @FindBy(xpath = "//div[contains(text(),'Number of Records:')]") //другой локатор!
     private WebElement _numberOfRecordsFromTip;
 
 
-//    @FindBy(css = ".CodeMirror-line:nth-last-child(2)")
-//    private WebElement _prelastlineCodeSQL;
-
-
-    public MainPageW3C(WebDriver driver, WebDriverWait wait)
-    {
+    public MainPageW3C(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
         PageFactory.initElements(_driver, this);
     }
@@ -40,12 +34,6 @@ public class MainPageW3C extends PageObject
     private WebElement getTextareaCodeSQL() {
         return _textareaCodeSQL;
     }
-
-//    private WebElement getCommandWord() {
-//        return _commandWord;
-//    }
-
-    //private WebElement getPrelastlineCodeSQL() { return _prelastlineCodeSQL; }
 
     private WebElement getRunSQLButton() {
         return _runSQLButton;
@@ -61,41 +49,41 @@ public class MainPageW3C extends PageObject
     }
 
     public MainPageW3C clearCommandInTextAreaCodeSQL() {
-        System.out.println("Delete commands inside text area");
+        System.out.println("Delete existing command inside text area");
 
-        JavascriptExecutor js = (JavascriptExecutor) _driver;
-        List<WebElement> commandWords = _driver.findElements(By.cssSelector("span .cm-m-sql"));
-        commandWords.stream()
-                    .filter(commandWord -> commandWord.getText().length() > 1)
-                    .forEach(commandWord -> js.executeScript("arguments[0].innerText = ''", commandWord));
+        _driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        Actions actions = new Actions(_driver);
+        boolean success = false;
 
-//        while (numberOfCommandWords() > 1) {
-//            try {
-////                if (getTextareaCodeSQL().getText().length() > 0) {
-//                    customClearInput(getCommandWord());
-////                }
-//            } catch (WebDriverException e) {
-//                e.printStackTrace();
-//            }
-//            success = true;
-//        }
-        //Assert.assertTrue(("Attempt to clear text area is failed"), success);
+        while (!getTextareaCodeSQL().getText().equals(""))
+            try {
+                actions.click().sendKeys(getTextareaCodeSQL(), Keys.END);
+                    for (int i = 0; i <= 10; i++) {
+                    actions.sendKeys(getTextareaCodeSQL(), Keys.BACK_SPACE);
+                    }
+                actions.build().perform();
+                success = true;
+            } catch (WebDriverException e) {
+                System.out.println(e.getMessage());
+            }
+        Assert.assertTrue(("Attempt to clear text area is failed"), success);
         return this;
     }
 
-    public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommandWords, String[] sqlCommandWordsArray) {
-
-        JavascriptExecutor js = (JavascriptExecutor) _driver;
-        js.executeScript("arguments[0].innerText = " + sqlCommandWords, getTextareaCodeSQL());
-
-        int amountOfWords = sqlCommandWordsArray.length;
-            for (int i = 0; i < amountOfWords; i++) {
-                List<WebElement> commandWordsSpans = _driver.findElements(By.cssSelector("span .cm-m-sql"));
-                js.executeScript("arguments[0].innerText = " + sqlCommandWordsArray[i], commandWordsSpans.get(i));
-        }
-
+    public MainPageW3C clickRunSQLButton() {
         getRunSQLButton().click();
         return this;
+    }
+
+    public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommandWords) {
+        System.out.println("Type command inside text area and run");
+        _driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        Actions actions = new Actions(_driver);
+
+        actions.click().sendKeys(getTextareaCodeSQL(), sqlCommandWords).build().perform();
+
+        clickRunSQLButton();
+            return this;
     }
 
     public String getAddressOfContactName(WebElement contactNameValue) {

@@ -4,8 +4,6 @@ import com.wisebits.POM.MainPageW3C;
 import com.wisebits.TestBase;
 import org.junit.Test;
 
-import java.util.stream.Stream;
-
 import static com.wisebits.PageURL.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +24,7 @@ public class TableCheckTest extends TestBase {
 
         System.out.println("1. Вывести все строки таблицы Customers");
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords, sqlCommandWordsArray);
+        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords);
 
         System.out.println("2. Проверить, что в выводе значению " + contactNameValue + " соответствует " +  addressValue);
         assertThat(mainPageW3C.getTextForTableValue(contactNameValue)).as("Значение Address для ContactName не соответствует ожидаемому")
@@ -37,15 +35,14 @@ public class TableCheckTest extends TestBase {
     public void checkForAmountOfRecordsTest() {
         System.out.println("Проверить соответствие количества записей в таблице ожидаемому по запросу");
         int amountOfRecords = 6;
-        String sqlCommandWords = "'SELECT * FROM Customers WHERE City = \"London\"'";
-        String[] sqlCommandWordsArray = {"'SELECT '", "'* '", "' FROM'", "' Customers'", "' WHERE'", "' City ='", "' \"London\"'"};
+        String sqlCommandWords = "SELECT * FROM Customers WHERE City = 'London';";
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
         System.out.println("1. Вывести строки таблицы Customers по условию");
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords, sqlCommandWordsArray);
+        mainPageW3C.sendCommandInTextAreaCodeSQL(sqlCommandWords);
 
         System.out.println("2. Проверить, что в выводе по условию количество записей равно " + amountOfRecords);
 
@@ -61,17 +58,18 @@ public class TableCheckTest extends TestBase {
     @Test
     public void checkForOneNewAddedRecordTest() {
         System.out.println("Проверить, что новая запись добавилась в таблицу");
-        String sqlCommandWords = "'INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country) " +
-                "VALUES (\"Drasfublut Ikalfend\", \"Zigmund\", \"Yaren 26\", \"Berlin\", \"123843\", \"Germany\")'";
-        String[] sqlCommandWordsArray = {"'INSERT '", "' '", "' INTO'", "' Customers (CustomerName, ContactName, Address, City, PostalCode, Country)'" +
-                "' VALUES', "};
+        String sqlCommandWords = "INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country) " +
+                "VALUES (\"Drasfublut Ikalfend\", \"Zigmund\", \"Yaren 26\", \"Berlin\", \"123843\", \"Germany\");";
+
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
-        //проверить количество записей в таблице - было 91
+        mainPageW3C.clickRunSQLButton();
+
+        //проверить количество записей в таблице - взять число
         //Check message "You have made changes to the database. Rows affected: 1"
-        //количество записей в таблице - стало 92
+        //количество записей в таблице - стало 91 + 1
         //можно softAssertion для каждого значения поля. собрать их в лист (и стримом), проверить на соответствие ожидаемым
         //expected List
     }
@@ -93,21 +91,27 @@ public class TableCheckTest extends TestBase {
     }
 
     @Test
-    public void checkResultsAreMissingAfterDeleted() {
+    public void checkResultsAreMissingAfterDeleted() throws InterruptedException {
         System.out.println("Проверить, что после удаления данные не выводятся в таблицу");
-        String commandToDeleteRecords = "'DELETE FROM Customers WHERE City = \"London\";'";
-        String commandToSelectDeletedRecords = "'SELECT * FROM Customers WHERE City = \"London\";'";
+        String commandToDeleteRecords = "DELETE FROM Customers WHERE City = \"London\";";
+        String commandToSelectDeletedRecords = "SELECT * FROM Customers WHERE City = \"London\";";
 
         _driver.get(_mainUrl);
         MainPageW3C mainPageW3C = new MainPageW3C(_driver, _wait);
 
         mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        //mainPageW3C.sendCommandInTextAreaCodeSQL(commandToDeleteRecords);
-        //Check message "You have made changes to the database. Rows affected: 6"
+        mainPageW3C.sendCommandInTextAreaCodeSQL(commandToDeleteRecords);
 
-        //mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
-        //mainPageW3C.sendCommandInTextAreaCodeSQL(commandToSelectDeletedRecords);
-        //Check message "No result."
+
+        assertThat(mainPageW3C.textNumberOfRecordsFromTip()).as("Количество записей в сообщении не соответствует ожидаемому")
+                .contains("6");
+
+        mainPageW3C = mainPageW3C.clearCommandInTextAreaCodeSQL();
+        mainPageW3C.sendCommandInTextAreaCodeSQL(commandToSelectDeletedRecords);
+
+
+        assertThat(mainPageW3C.textNumberOfRecordsFromTip()).as("Количество записей в сообщении не соответствует ожидаемому")
+                .isEqualTo("No result.");
 
         assertThat(mainPageW3C.isMissingTableOfRecords()).as("Таблица записей отображается").isTrue();
     }
