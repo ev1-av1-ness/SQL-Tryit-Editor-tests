@@ -13,8 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class MainPageW3C extends PageObject {
-    //    @FindBy(css = ".CodeMirror-line:nth-last-child(2) span > span:nth-last-of-type(1)")
-//    private WebElement _textareaCodeSQL;
+
     @FindBy(xpath = "//div[contains(@class, 'CodeMirror-code')]")
     private WebElement _textareaCodeSQL;
 
