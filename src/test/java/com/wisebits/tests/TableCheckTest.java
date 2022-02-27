@@ -15,8 +15,7 @@ public class TableCheckTest extends TestBase {
         String contactNameValue = "Giovanni Rovelli";
         String addressValue = "Via Ludovico il Moro 22";
 
-        String sqlCommandWords = "'SELECT * FROM Customers'";
-        String[] sqlCommandWordsArray = {"'SELECT '", "'* '", "' FROM'", "' Customers'"};
+        String sqlCommandWords = "SELECT * FROM Customers;";
 
 
         _driver.get(_mainUrl);

@@ -54,10 +54,10 @@ public class MainPageW3C extends PageObject {
         Actions actions = new Actions(_driver);
         boolean success = false;
 
-        while (!getTextareaCodeSQL().getText().equals(""))
+        while (!getTextareaCodeSQL().getText().equals("")) {
             try {
                 actions.click().sendKeys(getTextareaCodeSQL(), Keys.END);
-                    for (int i = 0; i <= 10; i++) {
+                for (int i = 0; i < 10; i++) {
                     actions.sendKeys(getTextareaCodeSQL(), Keys.BACK_SPACE);
                     }
                 actions.build().perform();
@@ -65,6 +65,7 @@ public class MainPageW3C extends PageObject {
             } catch (WebDriverException e) {
                 System.out.println(e.getMessage());
             }
+        }
         Assert.assertTrue(("Attempt to clear text area is failed"), success);
         return this;
     }
@@ -76,13 +77,14 @@ public class MainPageW3C extends PageObject {
 
     public MainPageW3C sendCommandInTextAreaCodeSQL(String sqlCommandWords) {
         System.out.println("Type command inside text area and run");
+
         _driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
         Actions actions = new Actions(_driver);
 
         actions.click().sendKeys(getTextareaCodeSQL(), sqlCommandWords).build().perform();
 
         clickRunSQLButton();
-            return this;
+        return this;
     }
 
     public String getAddressOfContactName(WebElement contactNameValue) {
